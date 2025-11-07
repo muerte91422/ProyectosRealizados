@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}TLOU Threat Map{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">🧟‍♂️ TLOU Threat Map</h1>
+        <p class="text-center">Sistema de gestión de amenazas en The Last of Us.</p>
+        
+        <div class="text-center mt-4">
+            <a href="{{ path('app_post_index') }}" class="btn btn-primary btn-lg">Ver Posts</a>
+            <a href="{{ path('app_post_new') }}" class="btn btn-success btn-lg">Crear Post</a>
+        </div>
+    </div>
+{% endblock %}

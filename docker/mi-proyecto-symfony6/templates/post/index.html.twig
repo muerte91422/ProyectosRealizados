@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Posts{% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Posts</h1>
+    <a href="{{ path('app_post_new') }}" class="btn btn-success mb-3">Crear Post</a>
+    <a href="{{ path('app_post_export') }}" class="btn btn-info mb-3">Exportar CSV</a>
+
+    {% if posts|length == 0 %}
+        <p>No hay posts aún.</p>
+    {% else %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Ubicación</th>
+                    <th>Ocupaciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                    <tr>
+                        <td>{{ post.number }}</td>
+                        <td>{{ post.location }}</td>
+                        <td>
+                            {% for occ in post.occupations %}
+                                <span class="badge bg-primary">{{ occ.type }}</span>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}

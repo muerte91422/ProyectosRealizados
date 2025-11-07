@@ -1,0 +1,9 @@
+Número del puesto,Localización,Tipo de ocupación,Nombre,Armas,Tipo de zombie,Observación
+"1","Estadio WLF","wlf","Nora","","","Lider de patrulla"
+"2","Hospital de Seattle","infected_nest","","","runner,clicker,bloater","Zona de alto riesgo"
+"3","Túneles del metro","infected_nest","","","stalker,rat_king","Movimiento constante"
+"3","Túneles del metro","wlf","Manny","","","Control de acceso"
+"4","Hillcrest","infected_nest","","","clicker","Tienda de bicicletas infestada"
+"4","Hillcrest","seraphite","","arco,pistola","","Emboscada en calle principal, 2 francotiradores"
+"5","Acuario","infected_nest","","","runner,stalker","Túneles de servicio, entrada trasera"
+"5","Acuario","wlf","Owen","","","Vigilancia del tanque principal"
