@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+    python3.12
+
+    Sample SAM Template for imagen
+
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+    Function:
+        Timeout: 3
+
+        # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+        LoggingConfig:
+            LogFormat: JSON
+Resources:
+    DynamoDBTable:
+        Type: AWS::DynamoDB::Table #tabla de AWS  y se crea -Sam build y -sam deploy..
+        DeletionPolicy: Retain
+        UpdateReplacePolicy: Retain
+        Properties:
+            TableName: battery-catalog-demo #tabla
+            AttributeDefinitions:
+                - AttributeName: batt_id
+                  AttributeType: S
+                - AttributeName: battery_name
+                  AttributeType: S
+                - AttributeName: brand
+                  AttributeType: S
+                - AttributeName: model
+                  AttributeType: S
+                - AttributeName: capacity_kwh
+                  AttributeType: S
+                - AttributeName: power_output
+                  AttributeType: S
+                - AttributeName: type_device
+                  AttributeType: S
+
+            KeySchema: #PK
+                - AttributeName: batt_id #Conecta el indice con el atributo
+                  KeyType: HASH
+
+            BillingMode: PAY_PER_REQUEST
+
+            GlobalSecondaryIndexes: # Une el indice a  los tributos  de arriba
+                - IndexName: battery_name_index
+                  KeySchema:
+                      - AttributeName: battery_name
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL # A lo que le das acceso  dentro de la tabla
+
+                - IndexName: brand_index
+                  KeySchema:
+                      - AttributeName: brand
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+
+                - IndexName: model_index
+                  KeySchema:
+                      - AttributeName: model
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+
+                - IndexName: capacity_kwh_index
+                  KeySchema:
+                      - AttributeName: capacity_kwh
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+
+                - IndexName: power_output_index
+                  KeySchema:
+                      - AttributeName: power_output
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+
+                - IndexName: type_device_index
+                  KeySchema:
+                      - AttributeName: type_device
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+
+    HelloWorldFunction:
+        Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        Properties:
+            PackageType: Image
+            Architectures:
+                - x86_64
+
+            Environment:
+                Variables:
+                    TABLE_NAME: !Ref DynamoDBTable
+            Policies: # ¡Importante! Permisos para DynamoDB
+                - DynamoDBCrudPolicy:
+                      TableName: !Ref DynamoDBTable
+
+            Events:
+                Informacion_total:
+                    Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+                    Properties:
+                        Path: /hello
+                        Method: get
+
+                Informacion_id:
+                    Type: Api
+                    Properties:
+                        Path: /hello/{id}
+                        Method: get
+
+                post_informacion:
+                    Type: Api
+                    Properties:
+                        Path: /hello
+                        Method: post
+
+                DeleteId:
+                    Type: Api
+                    Properties:
+                        Path: /hello/{id}
+                        Method: delete
+
+                PutInformacion:
+                    Type: Api
+                    Properties:
+                        Path: /hello
+                        Method: put
+
+        Metadata: #informacion sobre el dockerfile
+            Dockerfile: Dockerfile
+            DockerContext: ./hello_world
+            DockerTag: python3.12-v1
+
+Outputs:
+    # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
+    # Find out more about other implicit resources you can reference within SAM
+    # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
+    HelloWorldApi:
+        Description: API Gateway endpoint URL for Prod stage for Hello World
+            function
+        Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}/Prod/hello/"
+    HelloWorldFunction:
+        Description: Hello World Lambda Function ARN
+        Value: !GetAtt HelloWorldFunction.Arn
+    HelloWorldFunctionIamRole:
+        Description: Implicit IAM Role created for Hello World function
+        Value: !GetAtt HelloWorldFunctionRole.Arn
